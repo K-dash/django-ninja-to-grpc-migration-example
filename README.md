@@ -24,22 +24,27 @@
 
 ## 実行方法
 
-### 全サービスを一括起動する
+1. 本プロジェクトを clone します
 
-- ルートディレクトリで `./run.sh` を実行すると 2 つのサービスコンテナがすべて起動します
+```bash
+git clone https://github.com/K-dash/django-ninja-to-grpc-migration-example.git
+cd django-ninja-to-grpc-migration-example
+```
 
-  ```bash
-  chmod +x run.sh
-  ./run.sh
-  ```
+2. ルートディレクトリで `./run.sh` を実行すると 2 つのサービスコンテナがすべて起動します
 
-- service_a
-  - Django -> 8000 ポート
-  - gRPC サーバー -> 50051 ポート
-- service_b
-  - Django -> 8001 ポート
+```bash
+chmod +x run.sh
+./run.sh
+```
 
 ### 動作イメージ
+
+- service_a
+  - Django+Ninja -> 8000 ポート
+  - gRPC サーバー -> 50051 ポート
+- service_b
+  - Django+Ninja -> 8001 ポート
 
 ```mermaid
 sequenceDiagram
