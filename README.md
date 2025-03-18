@@ -5,7 +5,7 @@
 - **service_a**
   - Django を基盤とし、gRPC サーバーを起動してユーザー情報を返却するサービス
 - **service_b**
-  - Django Ninja を利用した REST API サーバー
+  - Django Ninja を利用した REST API サーバー（Order情報を返すAPIを想定）
   - ユーザー情報の取得時に、`service_a` の gRPC エンドポイントを呼び出す
 
 ## セットアップ
