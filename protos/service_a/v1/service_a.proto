@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+// --- Messages ---
+
+// OpenAPIの Request に対応
+message GetUserRequest {
+  int32 user_id = 1;
+}
+
+// OpenAPIの Response に対応
+message UserResponse {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+// --- Services ---
+
+// UserServiceとして、rpcメソッドを定義
+service UserService {
+  // GET /api/users?user_id=... に相当するメソッド
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+}
