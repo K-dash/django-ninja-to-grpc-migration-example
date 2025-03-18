@@ -1,13 +1,12 @@
 # django-ninja-to-grpc-migration-example
 
-このリポジトリは、Django と gRPC を組み合わせた実装例として作成された、ふたつのサービスを含むモノレポです。
+このリポジトリは、Django 上で gRPC サーバーを稼働させる実装例と、Django Ninja の REST API を gRPC に置き換える場合のサンプルコードをまとめたモノレポです。
 
 - **service_a**
   - Django を基盤とし、gRPC サーバーを起動してユーザー情報を返却するサービス
 - **service_b**
-  - Django Ninja を利用した REST API サーバー。ユーザー情報の取得時に、`service_a` の gRPC エンドポイントを呼び出します。
-
-本プロジェクトを通じて、Django ベースの gRPC サーバーと Django Ninja の REST API を連携させるサンプルを確認できます。
+  - Django Ninja を利用した REST API サーバー
+  - ユーザー情報の取得時に、`service_a` の gRPC エンドポイントを呼び出す
 
 ## セットアップ
 
@@ -20,7 +19,7 @@
 
 ### proto ファイル・スタブ生成
 
-- service_a / service_b それぞれのディレクトリで自動生成する仕組み（`Makefile.toml` の `gen-proto` タスク）を用意しています。
+- service_a / service_b それぞれのディレクトリで proto ファイルから gRPC のスタブコードを自動生成する仕組み（`Makefile.toml` の `gen-proto` タスク）を用意しています。
   - `Makefile.toml` の `run-in-docker` タスクを実行すると、事前処理として proto ファイルからスタブコードが自動生成されるので、手動で生成する必要はありません。
 
 ## 実行方法
@@ -44,9 +43,9 @@
 
 ```mermaid
 sequenceDiagram
-    participant Client as REST API クライアント
-    participant ServiceB as service_b (REST APIサーバー)<br>port: 8001
-    participant ServiceA as service_a (gRPCサーバー)<br>port: 50051
+    participant Client as REST API Client
+    participant ServiceB as service_b (Django Ninja Rest API)<br>port: 8001
+    participant ServiceA as service_a (Django-based gRPC server)<br>port: 50051
 
     Client->>+ServiceB: GET /?order_id=<user_id>
 
