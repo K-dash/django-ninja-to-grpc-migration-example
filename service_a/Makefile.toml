@@ -1,0 +1,71 @@
+[tasks.package-setup]
+condition = { files_modified = { input = [
+    "./pyproject.toml",
+    "uv.lock",
+], output = [
+    ".venv/timestamp.txt",
+] } }
+script = [
+    "uv venv",
+    "uv sync",
+    "uv pip install -e .",
+    "touch .venv/timestamp.txt",
+]
+
+[tasks.generate-stubs]
+dependencies = ["package-setup"]
+description = "gRPC スタブコードの生成"
+script = [
+    # protoファイルをstubs/にコピー
+    # そうしないと、stubs/配下に生成される service_a_pb2_grpc.py の import がエラーになる
+    # 参考：https://stackoverflow.com/questions/62818183/protobuf-grpc-relative-import-path-discrepancy-in-python/76946302#76946302
+    "cp ../protos/service_a/v1/service_a.proto service_a/service_a/grpc/stubs/service_a.proto",
+    "cd service_a",
+
+    # grpc_tools.protocの実行
+    """
+    uv run python -m grpc_tools.protoc \
+        --proto_path=. \
+        --python_out=. \
+        --grpc_python_out=. \
+        --pyi_out=. \
+        service_a/grpc/stubs/service_a.proto
+    """,
+]
+
+# ---------------------------
+# Docker Compose
+# ----------------------------
+
+[tasks.run-in-docker]
+dependencies = ["compose-build"]
+command = "docker"
+args = ["compose", "up", "-d", "api", "grpc_server"]
+
+[tasks.compose-build]
+dependencies = ["generate-stubs"]
+command = "docker"
+args = ["compose", "build", "--build-arg", "BUILDKIT_INLINE_CACHE=1", "${@}"]
+
+[tasks.logs]
+command = "docker"
+args = ["compose", "logs", "${@}"]
+
+[tasks.compose-down]
+command = "docker"
+args = ["compose", "down"]
+
+[tasks.compose-remove]
+command = "docker"
+args = ["compose", "down", "-v"]
+
+[tasks.test-grpc-client]
+description = "簡易的な gRPC クライアントのテスト"
+command = "docker"
+args = [
+    "compose",
+    "exec",
+    "grpc_server",
+    "python",
+    "service_a/grpc/test_client.py",
+]
