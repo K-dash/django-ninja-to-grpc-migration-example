@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# gRPC generated files
+*.proto
+*_pb2*.py
+*_pb2*.pyi
